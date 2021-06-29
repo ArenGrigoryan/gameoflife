@@ -1,0 +1,21 @@
+#field {
+	background: #000000;
+}
+
+#change-pixel-size {
+	height: 2rem;
+}
+
+#field, #change-pixel-size, .add-new-element {
+	display: block;
+	margin-bottom: 1rem;
+}
+
+input[type=number] {
+	border: none;
+	background-color: #c0c0c0;
+}
+
+#brightness, #brightness *, .add-new-element {
+	cursor: pointer;
+}
