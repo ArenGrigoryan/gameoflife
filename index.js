@@ -1,4 +1,5 @@
 const fs  = require('fs')
+
 const app = require('http').createServer((req, res) => {
 	try { res.end(fs.readFileSync('public'+((req.url == '/' || req.url == '/index') ? '/index.html' : req.url))) }
 	catch (e) {
@@ -9,3 +10,8 @@ const app = require('http').createServer((req, res) => {
 		}
 	}
 }).listen(3000, () => console.log('Started.'))
+
+const io = require('socket.io')(app)
+io.on('connection', (socket) => {
+	console.log(socket)
+})
