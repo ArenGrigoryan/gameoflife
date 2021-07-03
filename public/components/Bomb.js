@@ -1,3 +1,5 @@
+'use strict'
+
 class Bomb extends Component {
 	constructor (x, y) {
 		super(x, y)

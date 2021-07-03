@@ -1,3 +1,5 @@
+'use strict'
+
 class Wolf extends Component {
 	constructor (x, y) {
 		super(x, y)

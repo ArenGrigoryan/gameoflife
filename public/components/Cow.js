@@ -1,3 +1,5 @@
+'use strict'
+
 class Cow extends Component {
 	constructor (x, y) {
 		super(x, y)

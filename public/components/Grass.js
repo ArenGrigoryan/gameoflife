@@ -1,3 +1,5 @@
+'use strict'
+
 class Grass extends Component {
 	constructor (x, y) {
 		super(x, y)
