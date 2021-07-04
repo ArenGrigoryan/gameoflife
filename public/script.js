@@ -55,14 +55,6 @@ document.body.appendChild(Object.assign(document.createElement('button'), {class
 document.body.appendChild(Object.assign(document.createElement('label'), {id: 'brightness', innerHTML: 'Night '})).onclick = change => { update.dark = change.target.checked }
 document.getElementById('brightness').appendChild(Object.assign(document.createElement('input'), {id: 'change-brightness', type: 'checkbox', checked: update.dark, onclick: change => { update.dark = change.target.checked; refreshDaytimes(true) }}))
 document.body.appendChild(Object.assign(document.createElement('p'), {id: 'coords',innerHTML: 'Coordinates: '})).appendChild(Object.assign(document.createElement('i'), {id: 'coords-text', innerHTML: 'none'}))
-// document.body.appendChild(Object.assign(document.createElement('input'), {id: 'change-height', type: 'number', value: field.length, className: 'size-changer'})).oninput = changed => {
-// 	const diff = changed.data-field.length
-// 	if (diff > 0) for (let i = 0; i < diff; i++) field.push([])
-// 	else if (diff < 0) for (let i = 0; i > diff; i--) {
-// 		field.pop()
-// 	}
-// 	canvas.height+=diff*P
-// }
 
 const refreshDaytimes = (not1 = false) => {
 	clearInterval(daytimes.day)
@@ -102,5 +94,9 @@ setInterval(() => {
 	else for (let c of cows) c.action()
 	for (let g of grasses) g.action()
 }, 1000/FPS)
+
+setInterval(() => {
+	console.log(count(cows))
+}, 1000)
 
 // var DEV_COUNTER = 0, DEV_TIMING = 1; setInterval(() => { DEV_COUNTER+=DEV_TIMING; console.log(DEV_COUNTER) }, DEV_TIMING*1000) // DEVELOPING MODE

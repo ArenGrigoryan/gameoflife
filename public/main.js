@@ -103,6 +103,11 @@ setInterval(() => {
 	if (dark) for (let w of wolves) w.action()
 	else for (let c of cows) c.action()
 	for (let g of grasses) g.action()
+
+	document.getElementById('stats_grasses').innerHTML = grasses.length
+	document.getElementById('stats_cows').innerHTML = cows.length
+	document.getElementById('stats_wolves').innerHTML = wolves.length
+	document.getElementById('stats_bombs').innerHTML = bombs.length
 }, 1000/FPS)
 
 // var DEV_COUNTER = 0, DEV_TIMING = 1; setInterval(() => { DEV_COUNTER+=DEV_TIMING; console.log(DEV_COUNTER) }, DEV_TIMING*1000) // A TIMER FOR DEVELOPING MODE
