@@ -1,26 +1,54 @@
 'use strict'
 
 var P = 10, field = [], dark = false, colours
-const grasses = [], cows = [], wolves = [], bombs = [], update = {dark: dark}, FPS = 10, daytimeChangeRate = 10 *10000/FPS, daytimes = {day: null, night: null, define_night: null}
+const grasses = [], cows = [], wolves = [], bombs = [], humans = [], update = {dark: dark}, FPS = 10, daytimeChangeRate = 10 *10000/FPS, daytimes = {day: null, night: null, define_night: null}
 	, refreshCanvasShadow = () => { draw.shadowBlur = 1; draw.shadowColor = '#000000' }
 	, autoDaytimeChanger = () => setInterval(() => { update.dark = !dark }, daytimeChangeRate)
+
+// for (let y = 0; y < 50; y++) {
+// 	field.push([])
+// 	for (let x = 0; x < 50; x++) {
+// 		const cell = Math.random()
+// 		if (cell < 0.5) field[y].push(0)
+// 		else if (cell < 0.94) {
+// 			field[y].push(1)
+// 			grasses.push(new Grass(x,y))
+// 		}
+// 		else if (cell < 0.97) {
+// 			field[y].push(2)
+// 			cows.push(new Cow(x,y))
+// 		}
+// 		else if (cell < 0.995) {
+// 			field[y].push(3)
+// 			wolves.push(new Wolf(x,y))
+// 		}
+// 		else {
+// 			field[y].push(4)
+// 			bombs.push(new Bomb(x,y))
+// 		}
+// 	}
+// }
 
 for (let y = 0; y < 50; y++) {
 	field.push([])
 	for (let x = 0; x < 50; x++) {
 		const cell = Math.random()
 		if (cell < 0.5) field[y].push(0)
-		else if (cell < 0.94) {
+		else if (cell < 0.92) {
 			field[y].push(1)
 			grasses.push(new Grass(x,y))
 		}
-		else if (cell < 0.97) {
+		else if (cell < 0.96) {
 			field[y].push(2)
 			cows.push(new Cow(x,y))
 		}
-		else if (cell < 0.995) {
+		else if (cell < 0.992) {
 			field[y].push(3)
 			wolves.push(new Wolf(x,y))
+		}
+		else if (cell < 0.996) {
+			field[y].push(5)
+			humans.push(new Human(x,y))
 		}
 		else {
 			field[y].push(4)
@@ -61,16 +89,21 @@ document.body.appendChild(Object.assign(document.createElement('button'), {class
 	field[randomY][randomX] = 4
 	bombs.push(new Bomb(randomX, randomY))
 }
+document.body.appendChild(Object.assign(document.createElement('button'), {className: 'add-new-element', innerHTML: 'Add a human'})).onclick = () => {
+	const randomX = Math.floor(Math.random() * field[0].length), randomY = Math.floor(Math.random() * field.length)
+	field[randomY][randomX] = 5
+	humans.push(new Human(randomX, randomY))
+}
 document.body.appendChild(Object.assign(document.createElement('label'), {id: 'brightness', innerHTML: 'Night '})).onclick = change => { update.dark = change.target.checked }
 document.getElementById('brightness').appendChild(Object.assign(document.createElement('input'), {id: 'change-brightness', type: 'checkbox', checked: update.dark, onclick: change => { update.dark = change.target.checked; refreshDaytimes(true) }}))
 document.body.appendChild(Object.assign(document.createElement('p'), {id: 'coords',innerHTML: 'Coordinates: '})).appendChild(Object.assign(document.createElement('i'), {id: 'coords-text', innerHTML: 'none'}))
 
-const refreshDaytimes = (not1 = false) => {
+const refreshDaytimes = (not1st = false) => {
 	clearInterval(daytimes.day)
 	clearTimeout(daytimes.define_night)
 	clearInterval(daytimes.night)
 
-	if (!dark && not1) {
+	if (!dark && not1st) {
 		daytimes.night = autoDaytimeChanger()
 		daytimes.define_night = setTimeout (() => { update.dark = !dark; daytimes.day = autoDaytimeChanger()}, daytimeChangeRate/4)
 	}
@@ -89,6 +122,7 @@ setInterval(() => {
 			'#f2ede5', 					  // cow   (2)
 			dark ? '#acacac' : '#7cfc22', // wolf  (3)
 			dark ? '#aa443e' : '#ff0000', // bomb  (4)
+			dark ? '#a1665e' : '#ecbcb4', // human (5)
 		]
 		document.body.style.backgroundColor = dark ? '#808080' : '#ffffff'
 		document.getElementById('coords').style.color = document.getElementById('brightness').style.color = dark ? '#c0c0c0' : '#000000'
@@ -101,13 +135,17 @@ setInterval(() => {
 		draw.fillRect(x*P, y*P, P, P)
 	}
 	if (dark) for (let w of wolves) w.action()
-	else for (let c of cows) c.action()
+	else {
+		for (let c of cows) c.action()
+		for (let h of humans) h.action()
+	}
 	for (let g of grasses) g.action()
 
 	document.getElementById('stats_grasses').innerHTML = grasses.length
 	document.getElementById('stats_cows').innerHTML = cows.length
 	document.getElementById('stats_wolves').innerHTML = wolves.length
 	document.getElementById('stats_bombs').innerHTML = bombs.length
+	document.getElementById('stats_humans').innerHTML = humans.length
 }, 1000/FPS)
 
 // var DEV_COUNTER = 0, DEV_TIMING = 1; setInterval(() => { DEV_COUNTER+=DEV_TIMING; console.log(DEV_COUNTER) }, DEV_TIMING*1000) // A TIMER FOR DEVELOPING MODE
