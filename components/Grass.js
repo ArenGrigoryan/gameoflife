@@ -1,6 +1,7 @@
 'use strict'
+const Component = require('./Component.js'), {genDirs, chooseCells, removeElement} = require('./functions.js')
 
-class Grass extends Component {
+module.exports = class extends Component {
 	constructor (x, y) {
 		super(x, y)
 		this.time = 0

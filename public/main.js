@@ -1,67 +1,15 @@
 'use strict'
 
-var P = 10, field = [], dark = false, colours
-const grasses = [], cows = [], wolves = [], bombs = [], humans = [], update = {dark: dark}, FPS = 10, daytimeChangeRate = 10 *10000/FPS, daytimes = {day: null, night: null, define_night: null}
-	, refreshCanvasShadow = () => { draw.shadowBlur = 1; draw.shadowColor = '#000000' }
+var P = 10, colours
+const FPS = 10, daytimeChangeRate = 10 *10000/FPS, daytimes = {day: null, night: null, define_night: null}, socket = io()
+	, refreshCanvasShadow = () => { Draw.shadowBlur = 1; Draw.shadowColor = '#000000' }
 	, autoDaytimeChanger = () => setInterval(() => { update.dark = !dark }, daytimeChangeRate)
 
-// for (let y = 0; y < 50; y++) {
-// 	field.push([])
-// 	for (let x = 0; x < 50; x++) {
-// 		const cell = Math.random()
-// 		if (cell < 0.5) field[y].push(0)
-// 		else if (cell < 0.94) {
-// 			field[y].push(1)
-// 			grasses.push(new Grass(x,y))
-// 		}
-// 		else if (cell < 0.97) {
-// 			field[y].push(2)
-// 			cows.push(new Cow(x,y))
-// 		}
-// 		else if (cell < 0.995) {
-// 			field[y].push(3)
-// 			wolves.push(new Wolf(x,y))
-// 		}
-// 		else {
-// 			field[y].push(4)
-// 			bombs.push(new Bomb(x,y))
-// 		}
-// 	}
-// }
-
-for (let y = 0; y < 50; y++) {
-	field.push([])
-	for (let x = 0; x < 50; x++) {
-		const cell = Math.random()
-		if (cell < 0.5) field[y].push(0)
-		else if (cell < 0.92) {
-			field[y].push(1)
-			grasses.push(new Grass(x,y))
-		}
-		else if (cell < 0.96) {
-			field[y].push(2)
-			cows.push(new Cow(x,y))
-		}
-		else if (cell < 0.992) {
-			field[y].push(3)
-			wolves.push(new Wolf(x,y))
-		}
-		else if (cell < 0.996) {
-			field[y].push(5)
-			humans.push(new Human(x,y))
-		}
-		else {
-			field[y].push(4)
-			bombs.push(new Bomb(x,y))
-		}
-	}
-}
-
-const canvas = Object.assign(document.createElement('canvas'), {id: 'field', width: field[0].length*P, height: field.length*P, onclick: coords => { document.getElementById('coords-text').innerHTML = '('+Math.floor((coords.pageX-8)/P) + '; '+Math.floor((coords.pageY-8)/P)+')' } }), draw = canvas.getContext('2d')
+const canvas = Object.assign(document.createElement('canvas'), {id: 'field', width: field[0].length*P, height: field.length*P, onclick: coords => { document.getElementById('coords-text').innerHTML = '('+Math.floor((coords.pageX-8)/P) + '; '+Math.floor((coords.pageY-8)/P)+')' } }), Draw = canvas.getContext('2d')
 document.body.append(canvas); refreshCanvasShadow()
 
-draw.shadowBlur = 1
-draw.shadowColor = '#000000'
+Draw.shadowBlur = 1
+Draw.shadowColor = '#000000'
 document.body.appendChild(Object.assign(document.createElement('input'), {id: 'change-pixel-size', type: 'number', value: P})).oninput = () => {
 	let changed = document.getElementById('change-pixel-size').value
 	changed = changed == '' ? 0 : parseFloat(changed)
@@ -113,7 +61,7 @@ const refreshDaytimes = (not1st = false) => {
 	}
 }; refreshDaytimes()
 
-setInterval(() => {
+const draw = () => {
 	if (update.dark != undefined) {
 		document.getElementById('change-brightness').checked = dark = update.dark
 		colours = [
@@ -129,23 +77,22 @@ setInterval(() => {
 		delete update.dark
 	}
 
-	draw.clearRect(0, 0, canvas.width, canvas.height)
 	for (var y = 0; y < field.length; y++) for (let x = 0; x < field[y].length; x++) {
-		draw.fillStyle = colours[field[y][x]]
-		draw.fillRect(x*P, y*P, P, P)
+		Draw.fillStyle = colours[field[y][x]]
+		Draw.fillRect(x*P, y*P, P, P)
 	}
-	if (dark) for (let w of wolves) w.action()
-	else {
-		for (let c of cows) c.action()
-		for (let h of humans) h.action()
-	}
-	for (let g of grasses) g.action()
+
+	Draw.clearRect(0, 0, canvas.width, canvas.height)
 
 	document.getElementById('stats_grasses').innerHTML = grasses.length
 	document.getElementById('stats_cows').innerHTML = cows.length
 	document.getElementById('stats_wolves').innerHTML = wolves.length
 	document.getElementById('stats_bombs').innerHTML = bombs.length
 	document.getElementById('stats_humans').innerHTML = humans.length
+}
+
+setInterval(() => {
+	socket.on('send field', draw)
 }, 1000/FPS)
 
 // var DEV_COUNTER = 0, DEV_TIMING = 1; setInterval(() => { DEV_COUNTER+=DEV_TIMING; console.log(DEV_COUNTER) }, DEV_TIMING*1000) // A TIMER FOR DEVELOPING MODE

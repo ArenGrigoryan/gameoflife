@@ -1,6 +1,7 @@
 'use strict'
+const Component = require('./Component.js'), {genDirs, chooseCells, removeElement} = require('./functions.js')
 
-class Human extends Component {
+module.exports = class extends Component {
 	constructor (x, y) {
 		super(x, y)
 		this.energy = 10
