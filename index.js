@@ -72,6 +72,7 @@ function game () {
 // IO is here...
 const io = require('socket.io')(app)
 io.sockets.emit('send field', field)
+
 io.on('connection', () => {
 	createObjects(field)
 })
