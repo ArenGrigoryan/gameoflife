@@ -1,4 +1,3 @@
-'use strict'
 console.clear()
 
 const fs   = require('fs'),
@@ -25,37 +24,38 @@ const {genDirs, chooseCells, removeElement} = require('./components/functions.js
 	  Bomb = require('./components/Bomb.js'),
 	  Human = require('./components/Human.js')
 
-var field = [], dark = false
-const grasses = [], cows = [], wolves = [], bombs = [], humans = [], FPS = 10, update = {dark: dark}
+field = [], dark = false
+grasses = [], cows = [], wolves = [], bombs = [], humans = [], FPS = 1, daytimeChangeRate = 10 *10000/FPS
 
 function createObjects(field) {
-for (let y = 0; y < 50; y++) {
-	field.push([])
-	for (let x = 0; x < 50; x++) {
-		const cell = Math.random()
-		if (cell < 0.5) field[y].push(0)
-		else if (cell < 0.92) {
-			field[y].push(1)
-			grasses.push(new Grass(x,y))
-		}
-		else if (cell < 0.96) {
-			field[y].push(2)
-			cows.push(new Cow(x,y))
-		}
-		else if (cell < 0.992) {
-			field[y].push(3)
-			wolves.push(new Wolf(x,y))
-		}
-		else if (cell < 0.996) {
-			field[y].push(5)
-			humans.push(new Human(x,y))
-		}
-		else {
-			field[y].push(4)
-			bombs.push(new Bomb(x,y))
+	for (let y = 0; y < 50; y++) {
+		field.push([])
+		for (let x = 0; x < 50; x++) {
+			const cell = Math.random()
+			if (cell < 0.5) field[y].push(0)
+			else if (cell < 0.92) {
+				field[y].push(1)
+				grasses.push(new Grass(x,y))
+			}
+			else if (cell < 0.96) {
+				field[y].push(2)
+				cows.push(new Cow(x,y))
+			}
+			else if (cell < 0.992) {
+				field[y].push(3)
+				wolves.push(new Wolf(x,y))
+			}
+			else if (cell < 0.996) {
+				field[y].push(5)
+				humans.push(new Human(x,y))
+			}
+			else {
+				field[y].push(4)
+				bombs.push(new Bomb(x,y))
+			}
 		}
 	}
-}
+	io.sockets.emit('send field', field)
 }
 
 function game () {
@@ -73,7 +73,7 @@ function game () {
 const io = require('socket.io')(app)
 io.sockets.emit('send field', field)
 
-io.on('connection', () => {
+io.on('connection', (socket) => {
 	createObjects(field)
 })
 
